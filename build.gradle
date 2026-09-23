@@ -34,24 +34,19 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-bootRun {
-	environment 'UPLOAD_ROOT_DIR', System.getProperty("user.dir")
-	environment 'UPLOAD_TARGET_DIR', "/uploads"
-}
-
-def assertContains(String text, String expected, String label) {
+static def assertContains(String text, String expected, String label) {
     if (!text.contains(expected)) {
         throw new AssertionError("${label} is missing. Expected to find: ${expected}")
     }
 }
 
-def assertFileExists(File file, String label) {
+static def assertFileExists(File file, String label) {
     if (!file.exists()) {
         throw new AssertionError("${label} does not exist: ${file.absolutePath}")
     }
 }
 
-def testJavaToolchain() {
+static def testJavaToolchain() {
     def buildFile = file("${projectDir}/build.gradle")
     assertFileExists(buildFile, "build.gradle")
 
@@ -59,13 +54,13 @@ def testJavaToolchain() {
     assertContains(content, "languageVersion = JavaLanguageVersion.of(21)", "Java 21 toolchain")
 }
 
-def testRepositories() {
+static def testRepositories() {
     def buildFile = file("${projectDir}/build.gradle")
     def content = buildFile.getText('UTF-8')
     assertContains(content, "mavenCentral()", "Maven Central repository")
 }
 
-def testCoreDependencies() {
+static def testCoreDependencies() {
     def buildFile = file("${projectDir}/build.gradle")
     def content = buildFile.getText('UTF-8')
 
@@ -75,14 +70,14 @@ def testCoreDependencies() {
     assertContains(content, "spring-boot-starter", "Spring Boot starter dependency")
 }
 
-def testH2Dependency() {
+static def testH2Dependency() {
     def buildFile = file("${projectDir}/build.gradle")
     def content = buildFile.getText('UTF-8')
 
     assertContains(content, "runtimeOnly 'com.h2database:h2'", "H2 runtime dependency")
 }
 
-def testTestDependencies() {
+static def testTestDependencies() {
     def buildFile = file("${projectDir}/build.gradle")
     def content = buildFile.getText('UTF-8')
 
@@ -90,7 +85,7 @@ def testTestDependencies() {
     assertContains(content, "junit-platform-launcher", "JUnit platform launcher dependency")
 }
 
-def testJUnitPlatformConfiguration() {
+static def testJUnitPlatformConfiguration() {
     def buildFile = file("${projectDir}/build.gradle")
     def content = buildFile.getText('UTF-8')
 
