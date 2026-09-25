@@ -46,49 +46,32 @@ static def assertFileExists(File file, String label) {
     }
 }
 
-static def testJavaToolchain() {
-    def buildFile = file("${projectDir}/build.gradle")
-    assertFileExists(buildFile, "build.gradle")
+static def testJavaToolchain(String content) {
 
-    def content = buildFile.getText('UTF-8')
     assertContains(content, "languageVersion = JavaLanguageVersion.of(21)", "Java 21 toolchain")
 }
 
-static def testRepositories() {
-    def buildFile = file("${projectDir}/build.gradle")
-    def content = buildFile.getText('UTF-8')
+static def testRepositories(String content) {
     assertContains(content, "mavenCentral()", "Maven Central repository")
 }
 
-static def testCoreDependencies() {
-    def buildFile = file("${projectDir}/build.gradle")
-    def content = buildFile.getText('UTF-8')
-
+static def testCoreDependencies(String content) {
     assertContains(content, "spring-boot-starter-data-jpa", "Spring Data JPA starter dependency")
     assertContains(content, "spring-boot-starter-web", "Spring Web starter dependency")
     assertContains(content, "spring-boot-starter-validation", "Spring Validation starter dependency")
     assertContains(content, "spring-boot-starter", "Spring Boot starter dependency")
 }
 
-static def testH2Dependency() {
-    def buildFile = file("${projectDir}/build.gradle")
-    def content = buildFile.getText('UTF-8')
-
+static def testH2Dependency(String content) {
     assertContains(content, "runtimeOnly 'com.h2database:h2'", "H2 runtime dependency")
 }
 
-static def testTestDependencies() {
-    def buildFile = file("${projectDir}/build.gradle")
-    def content = buildFile.getText('UTF-8')
-
+static def testTestDependencies(String content) {
     assertContains(content, "spring-boot-starter-test", "Spring Boot test dependency")
     assertContains(content, "junit-platform-launcher", "JUnit platform launcher dependency")
 }
 
-static def testJUnitPlatformConfiguration() {
-    def buildFile = file("${projectDir}/build.gradle")
-    def content = buildFile.getText('UTF-8')
-
+static def testJUnitPlatformConfiguration(String content) {
     assertContains(content, "useJUnitPlatform()", "JUnit Platform configuration")
 }
 
@@ -96,13 +79,18 @@ tasks.register("validateBuildGradleUnitTests") {
     group = "verification"
     description = "Validates the build.gradle settings for Java 21, Boot dependencies, H2, and JUnit configuration."
 
+    def buildFile = file("build.gradle")
+
     doLast {
-        testJavaToolchain()
-        testRepositories()
-        testCoreDependencies()
-        testH2Dependency()
-        testTestDependencies()
-        testJUnitPlatformConfiguration()
+        assertFileExists(buildFile, "build.gradle")
+        def content = buildFile.getText('UTF-8')
+
+        testJavaToolchain(content)
+        testRepositories(content)
+        testCoreDependencies(content)
+        testH2Dependency(content)
+        testTestDependencies(content)
+        testJUnitPlatformConfiguration(content)
 
         println "All build.gradle validation tests passed."
     }
